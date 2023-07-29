@@ -1,0 +1,44 @@
+---
+"on":
+  workflow_call:
+    SSH_SERVER:
+      description: SSH server to log in via SSH
+      required: true
+    SSH_PRIVATE_KEY:
+      description: SSH secret key to log in via SSH
+      required: true
+    ENVIRONMENT:
+      description: Environment file string to be used during deployment
+      required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Run deployment script on host server
+        env:
+          HOST_SERVER: ${{ secrets.SSH_SERVER }}
+          # Repository name to deploy
+          REPO_NAME: ${{ github.repository }}
+          # Repository url to deploy
+          REPO_URL: https://github.com/${{ github.repository }}
+          # Git revison to deploy
+          REVISON: ${{ github.ref }}
+          # Enviroment file string to be used with docker-compose files
+          # https://hexdocs.pm/dotenvy/dotenv-file-format.html
+          ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
+        # Make script executable if not
+        # Copy over the deploy script
+        # Run the deploy script
+        run: |
+          chmod +x deploy.bash
+          scp -o StrictHostKeyChecking=no deploy.bash $HOST_SERVER:/tmp/deploy.bash
+          ssh -o StrictHostKeyChecking=no $HOST_SERVER "bash /tmp/deploy.bash"
