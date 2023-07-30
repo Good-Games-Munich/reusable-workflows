@@ -48,7 +48,7 @@ It deploys to a environment with the name `production`.
 #### Example
 
 1. Setup all needed non organization secrets listed above (`In organization` are setup [here](https://github.com/organizations/Good-Games-Munich/settings/secrets/actions) already). See [Encrypted secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets)
-2. Create a file at `github/workflows/production-deploy.yml` and copy paste:
+2. Create a file at `.github/workflows/production-deploy.yml` and copy paste:
 
 ```yaml
 ---
