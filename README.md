@@ -51,16 +51,23 @@ It deploys to a environment with the name `production`.
 2. Create a file at `github/workflows/production-deploy.yml` and copy paste:
 
 ```yaml
+---
+# https://github.github.io/actions-cheat-sheet/actions-cheat-sheet.pdf
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#name
 name: "Deploy service to production"
 
+# Define the trigger. https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#on
 on:
   release:
     types:
       - created
 
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobs
 jobs:
   deploy:
+    # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsuses
     uses: Good-Games-Munich/reusable-workflows/.github/workflows/production-deploy.yml@main
+    # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idsecretsinherit
     secrets: inherit
 ```
 

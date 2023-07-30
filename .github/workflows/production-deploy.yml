@@ -1,29 +1,43 @@
 ---
+# https://github.github.io/actions-cheat-sheet/actions-cheat-sheet.pdf
+# Define the trigger. https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#on
 "on":
   workflow_call:
-    SSH_SERVER:
-      description: SSH server to log in via SSH
-      required: true
-    SSH_PRIVATE_KEY:
-      description: SSH secret key to log in via SSH
-      required: true
-    ENVIRONMENT:
-      description: Environment file string to be used during deployment
-      required: true
+    # Neede secrets to be given. https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#onworkflow_callsecrets
+    secrets:
+      SSH_SERVER:
+        description: SSH server to log in via SSH
+        required: true
+      SSH_PRIVATE_KEY:
+        description: SSH secret key to log in via SSH
+        required: true
+      ENVIRONMENT:
+        description: Environment file string to be used during deployment
+        required: true
 
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobs
 jobs:
   deploy:
+    # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idruns-on
     runs-on: ubuntu-latest
+    # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idenvironment
     environment:
       name: production
+    # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idsteps
     steps:
+      # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsname
       - name: Checkout repository
+        # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsuses
+        # https://github.com/actions/checkout/
         uses: actions/checkout@v3
       - name: Setup SSH
+        # https://github.com/webfactory/ssh-agent/
         uses: webfactory/ssh-agent@v0.8.0
+        # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepswith
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       - name: Run deployment script on host server
+        # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idenv
         env:
           HOST_SERVER: ${{ secrets.SSH_SERVER }}
           # Repository name to deploy
@@ -35,9 +49,9 @@ jobs:
           # Enviroment file string to be used with docker-compose files
           # https://hexdocs.pm/dotenvy/dotenv-file-format.html
           ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
-        # Make script executable if not
-        # Copy over the deploy script
-        # Run the deploy script
+        # Make script executable if not. https://wiki.ubuntuusers.de/chmod/
+        # Copy over the deploy script. https://linuxize.com/post/how-to-use-scp-command-to-securely-transfer-files/
+        # Run the deploy script. https://www.hostinger.com/tutorials/ssh/basic-ssh-commands
         run: |
           chmod +x deploy.bash
           scp -o StrictHostKeyChecking=no deploy.bash $HOST_SERVER:/tmp/deploy.bash
