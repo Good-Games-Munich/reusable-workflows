@@ -5,10 +5,13 @@
   workflow_call:
     # Neede secrets to be given. https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#onworkflow_callsecrets
     secrets:
-      SSH_SERVER:
+      SSH_HOST:
         description: SSH server to log in via SSH
         required: true
-      SSH_PRIVATE_KEY:
+      SSH_USERNAME:
+        description: SSH username to log in via SSH
+        required: true
+      SSH_KEY:
         description: SSH secret key to log in via SSH
         required: true
       ENVIRONMENT:
@@ -30,16 +33,11 @@ jobs:
         # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsuses
         # https://github.com/actions/checkout/
         uses: actions/checkout@v3
-      - name: Setup SSH
-        # https://github.com/webfactory/ssh-agent/
-        uses: webfactory/ssh-agent@v0.8.0
-        # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepswith
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       - name: Run deployment script on host server
+        # https://github.com/appleboy/ssh-action
+        uses: appleboy/ssh-action@v1.0.0
         # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idenv
         env:
-          HOST_SERVER: ${{ secrets.SSH_SERVER }}
           # Repository name to deploy
           REPO_NAME: ${{ github.repository }}
           # Repository url to deploy
@@ -49,8 +47,16 @@ jobs:
           # Enviroment file string to be used with docker-compose files
           # https://hexdocs.pm/dotenvy/dotenv-file-format.html
           ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
-        # Make script executable if not. https://wiki.ubuntuusers.de/chmod/
-        # Copy over the deploy script. https://linuxize.com/post/how-to-use-scp-command-to-securely-transfer-files/
-        # Run the deploy script. https://www.hostinger.com/tutorials/ssh/basic-ssh-commands
-        run: |
-          ssh -o StrictHostKeyChecking=no $HOST_SERVER "curl -s https://raw.githubusercontent.com/Good-Games-Munich/reusable-workflows/main/deploy.bash > /tmp/deploy.bash && chmod +x deploy.bash && bash /tmp/deploy.bash"
+        # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepswith
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key:  ${{ secrets.SSH_KEY }}
+          envs: REPO_NAME,REPO_URL,REVISON,ENVIRONMENT
+          # Get deploy script from github
+          # Make script executable if not. https://wiki.ubuntuusers.de/chmod/
+          # Run script
+          script: |
+            curl -s https://raw.githubusercontent.com/Good-Games-Munich/reusable-workflows/main/deploy.bash > /tmp/deploy.bash
+            chmod +x deploy.bash
+            bash /tmp/deploy.bash
