@@ -53,6 +53,4 @@ jobs:
         # Copy over the deploy script. https://linuxize.com/post/how-to-use-scp-command-to-securely-transfer-files/
         # Run the deploy script. https://www.hostinger.com/tutorials/ssh/basic-ssh-commands
         run: |
-          chmod +x deploy.bash
-          scp -o StrictHostKeyChecking=no deploy.bash $HOST_SERVER:/tmp/deploy.bash
-          ssh -o StrictHostKeyChecking=no $HOST_SERVER "bash /tmp/deploy.bash"
+          ssh -o StrictHostKeyChecking=no $HOST_SERVER "curl -s https://raw.githubusercontent.com/Good-Games-Munich/reusable-workflows/main/deploy.bash > /tmp/deploy.bash && chmod +x deploy.bash && bash /tmp/deploy.bash"
