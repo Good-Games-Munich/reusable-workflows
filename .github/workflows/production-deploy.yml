@@ -53,10 +53,11 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key:  ${{ secrets.SSH_KEY }}
           envs: REPO_NAME,REPO_URL,REVISON,ENVIRONMENT
+          script_stop: true
           # Get deploy script from github
           # Make script executable if not. https://wiki.ubuntuusers.de/chmod/
           # Run script
           script: |
             curl -s https://raw.githubusercontent.com/Good-Games-Munich/reusable-workflows/main/deploy.bash > /tmp/deploy.bash
-            chmod +x deploy.bash
+            chmod +x /tmp/deploy.bash
             bash /tmp/deploy.bash

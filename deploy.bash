@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Set that script fails on any error
+set -e
+
 ##########################################################################################
 #                                                                                        #
 # Checks out a git revision and make sure the repository is cloned on the remote server. #

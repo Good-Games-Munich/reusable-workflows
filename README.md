@@ -35,11 +35,12 @@ none.
 
 #### Secrets
 
-| Name              | Description                                           | Required | In organization |
-| ----------------- | ----------------------------------------------------- | -------- | --------------- |
-| `SSH_SERVER`      | SSH server to log in via SSH.                         | `true`   | `true`          |
-| `SSH_PRIVATE_KEY` | SSH secret key to log in via SSH.                     | `true`   | `true`          |
-| `ENVIRONMENT`     | Environment file string to be used during deployment. | `true`   | `false`         |
+| Name           | Description                                           | Required | In organization |
+| -------------- | ----------------------------------------------------- | -------- | --------------- |
+| `SSH_HOST`     | SSH server to log in via SSH.                         | `true`   | `true`          |
+| `SSH_USERNAME` | SSH username to log in via SSH.                       | `true`   | `true`          |
+| `SSH_KEY`      | SSH secret key to log in via SSH.                     | `true`   | `true`          |
+| `ENVIRONMENT`  | Environment file string to be used during deployment. | `true`   | `false`         |
 
 #### Environment deployment
 
