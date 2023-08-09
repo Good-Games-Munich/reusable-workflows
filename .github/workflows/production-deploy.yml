@@ -43,7 +43,7 @@ jobs:
           # Repository url to deploy
           REPO_URL: https://github.com/${{ github.repository }}
           # Git revison to deploy
-          REVISON: ${{ github.ref }}
+          REVISON: ${{ github.ref_name }}
           # Enviroment file string to be used with docker-compose files
           # https://hexdocs.pm/dotenvy/dotenv-file-format.html
           ENVIRONMENT: ${{ secrets.ENVIRONMENT }}
