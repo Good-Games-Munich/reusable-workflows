@@ -39,6 +39,10 @@ cd "$repo_path" || exit 1
 # https://git-scm.com/docs/git-reset
 git reset --hard
 
+# fetch new branches and tags
+# https://git-scm.com/docs/git-fetch
+git fetch
+
 # Switch to target revison
 # https://git-scm.com/docs/git-switch
 git switch --detach "$REVISON"
