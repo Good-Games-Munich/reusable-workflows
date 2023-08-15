@@ -51,13 +51,10 @@ git switch --detach "$REVISON"
 # https://hexdocs.pm/dotenvy/dotenv-file-format.html
 echo "$ENVIRONMENT" > .env.local
 
-# Just to make sure we attend to build the service if needed
+# Pull newer images
 # https://docs.docker.com/compose/reference/#use--f-to-specify-name-and-path-of-one-or-more-compose-files
 # https://docs.docker.com/compose/environment-variables/set-environment-variables/#substitute-with---env-file
-docker-compose --env-file .env.local -f docker-compose.yml -f docker-compose.production.yml build
+docker-compose --env-file .env.local -f docker-compose.yml -f docker-compose.production.yml pull
 
-# Stop running service
-docker-compose --env-file .env.local -f docker-compose.yml -f docker-compose.production.yml down
-
-# Start service new now with the revison
-docker-compose --env-file .env.local -f docker-compose.yml -f docker-compose.production.yml up -d
+# Start service up again and build if needed
+docker-compose --env-file .env.local -f docker-compose.yml -f docker-compose.production.yml up --detach --build
