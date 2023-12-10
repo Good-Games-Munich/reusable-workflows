@@ -1,0 +1,45 @@
+---
+# https://github.github.io/actions-cheat-sheet/actions-cheat-sheet.pdf
+# Define the trigger. https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#on
+"on":
+  workflow_call:
+    inputs:
+      build_command:
+        required: true
+        type: string
+      to_zip_directory:
+        required: true
+        type: string
+      release_filename:
+        required: false
+        type: string
+        default: "release.zip"
+
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobs
+jobs:
+  deploy:
+    # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idruns-on
+    runs-on: ubuntu-latest
+    # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idenvironment
+    environment:
+      name: production
+    # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#permissions
+    permissions:
+        contents: write
+    # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idsteps
+    steps:
+      # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsname
+      - name: Checkout repository
+        # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsuses
+        # https://github.com/actions/checkout/
+        uses: actions/checkout@v3
+      # https://github.com/montudor/action-zip/tree/v1/
+      - name: Create archive
+        uses: montudor/action-zip@v1
+        with:
+          args: zip -qq -r ${{ inputs.release_filename }} ${{ inputs.to_zip_directory }}
+      # https://github.com/softprops/action-gh-release/tree/v1/
+      - name: Upload artifact
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ${{ inputs.release_filename }}

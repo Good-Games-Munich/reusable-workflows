@@ -78,6 +78,55 @@ jobs:
     secrets: inherit
 ```
 
+### [Production archive release](.github/workflows/production-zip-release.yml)
+
+Uploads a release zip archive.
+
+#### Inputs
+
+| Name               | Description                     | Required | Default       |
+| ------------------ | ------------------------------- | -------- | ------------- |
+| `to_zip_directory` | SSH server to log in via SSH.   | `true`   | ``            |
+| `release_filename` | SSH username to log in via SSH. | `false`  | `release.zip` |
+
+#### Secrets
+
+none.
+
+#### Environment deployment
+
+It deploys to a environment with the name `production`.
+
+#### Example
+
+1. Create a file at `.github/workflows/production-release.yml` and copy paste:
+
+```yaml
+---
+# https://github.github.io/actions-cheat-sheet/actions-cheat-sheet.pdf
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#name
+name: "Upload archive to release"
+
+# Define the trigger. https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#on
+on:
+  release:
+    types:
+      - created
+
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobs
+jobs:
+  deploy:
+    # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsuses
+    uses: Good-Games-Munich/reusable-workflows/.github/workflows/production-archive-release@main
+    # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idwith
+    with:
+      build_command: npm run build
+      to_zip_directory: dist
+    # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#permissions
+    permissions:
+        contents: write
+```
+
 <!-- CONTRIBUTING -->
 
 ## Contributing
