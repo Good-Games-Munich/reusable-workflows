@@ -37,12 +37,12 @@ jobs:
         # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsrun
         run: ${{ inputs.build_command }}
       # https://github.com/montudor/action-zip/tree/v1/
+      - uses: montudor/action-zip@v1
       - name: Create archive
-        uses: montudor/action-zip@v1
-        with:
-          args: zip -qq -r ${{ inputs.release_filename }} ${{ inputs.to_zip_directory }}
+        working-directory: ${{ inputs.to_zip_directory }}
+        run: zip -qq -r ${{ inputs.release_filename }} .
       # https://github.com/softprops/action-gh-release/tree/v1/
       - name: Upload artifact
         uses: softprops/action-gh-release@v1
         with:
-          files: ${{ inputs.release_filename }}
+          files: ${{ inputs.to_zip_directory }}/${{ inputs.release_filename }}
